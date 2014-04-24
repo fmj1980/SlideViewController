@@ -8,6 +8,8 @@
 
 #import "SlideViewControllerViewController.h"
 
+//使用storayboard，segue的Identity必须定义为FM_SEGUE_ 跟着数字，必须以0开始的
+//例如：FM_SEGUE_0 FM_SEGUE_1
 #define FM_SEGUE_STR @"FM_SEGUE_"
 
 
@@ -63,7 +65,6 @@
         return;
     }
     
-    NSLog(@"currentIndex:%d",_currentIndex);
     UIView* firsetView = (UIView*)self.view.subviews.firstObject;
     
     if (pan.state == UIGestureRecognizerStateEnded) {
@@ -73,18 +74,12 @@
         }
         CGFloat deltaX = firsetView.frame.origin.x;
         if (fabs(deltaX)>firsetView.frame.size.width/2) {
-            [firsetView removeFromSuperview];
-            [secondView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-//            [UIView animateWithDuration:0.2f delay:0.0f options:UIViewAnimationOptionCurveLinear|UIViewAnimationOptionLayoutSubviews animations:^{
-//                [secondView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-//            } completion:nil];
-            
+            [self animateShow:secondView dispear:firsetView];
             self.currentIndex =  self.currentIndex + (deltaX<0?1:-1);
         }
         else
         {
-            [secondView removeFromSuperview];
-            [firsetView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+            [self animateShow:firsetView dispear:secondView];
         }
     }
     else if(pan.state == UIGestureRecognizerStateCancelled )
@@ -93,9 +88,8 @@
         if ( firsetView == secondView ) {
             return;
         }
+        [self animateShow:firsetView dispear:secondView];
         [secondView removeFromSuperview];
-        [firsetView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-
     }
     else if(pan.state == UIGestureRecognizerStateBegan)
     {
@@ -103,17 +97,23 @@
     }
     else
     {
+        
         CGPoint translate = [pan translationInView:self.view];
-        UIView* currentView = [[self.viewControllers objectAtIndex:self.currentIndex] view];
+        NSLog(@"translate:%f",translate.x);
 
         int secondIndex = translate.x< 0?self.currentIndex+1:self.currentIndex-1;
-        if (secondIndex<0 || secondIndex>self.viewControllers.count-1) {
+        if (secondIndex == _currentIndex || secondIndex<0 || secondIndex>self.viewControllers.count-1) {
             return;
         }
         
         UIView* secondView = [[self.viewControllers objectAtIndex:secondIndex] view];
         NSUInteger index = [self.view.subviews indexOfObject:secondView];
         if (index == NSNotFound) {
+            UIView* preSecondView = (UIView*)self.view.subviews.lastObject;
+            if (preSecondView!= nil && preSecondView != firsetView) {
+                [preSecondView removeFromSuperview];
+            }
+            
             [secondView setFrame:CGRectMake(self.view.frame.size.width, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
             [self.view addSubview:secondView];
         }
@@ -152,6 +152,21 @@
     return NO;
 }
 
+
+-(void)animateShow:(UIView*)showView dispear:(UIView*)dispearView
+{
+    [UIView animateWithDuration:0.2f delay:0.0f options:UIViewAnimationOptionCurveLinear|UIViewAnimationOptionLayoutSubviews animations:^{
+        [showView setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        CGFloat x = self.view.frame.size.width;
+        if (dispearView.frame.origin.x<0) {
+            x = 0-x;
+        }
+        [dispearView setFrame:CGRectMake(x, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    } completion:^(BOOL finished){
+        [dispearView removeFromSuperview];
+    }];
+    
+}
 #pragma mark For StoryBoard
 
 -(void)prepareForSegue:(FMSlideViewControllerSegue *)segue sender:(id)sender
@@ -182,9 +197,7 @@
             [self performSegueWithIdentifier:segue sender:nil];
         }
         @catch(NSException *exception) {
-            if (i>5) {
-                break;
-            }
+            break;
         }
         i++;
     }
