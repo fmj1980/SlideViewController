@@ -4,10 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
-        <!--Slide View Controller View Controller-->
+        <!--Slide View Controller-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
-                <viewController id="vXZ-lx-hvc" customClass="SlideViewControllerViewController" sceneMemberID="viewController">
+                <viewController id="vXZ-lx-hvc" customClass="SlideViewController" sceneMemberID="viewController">
                     <connections>
                         <segue destination="YiQ-dy-rt4" kind="custom" identifier="FM_SEGUE_0" customClass="FMSlideViewControllerSegue" id="ASc-CA-FPC"/>
                         <segue destination="1kg-Ni-1Vt" kind="custom" identifier="FM_SEGUE_1" customClass="FMSlideViewControllerSegue" id="qcQ-9c-X93"/>

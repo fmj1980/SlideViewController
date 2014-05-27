@@ -14,7 +14,7 @@
 		A02A79A81904E6BB00C440EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A02A79A71904E6BB00C440EC /* main.m */; };
 		A02A79AC1904E6BB00C440EC /* SlideViewControllerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A02A79AB1904E6BB00C440EC /* SlideViewControllerAppDelegate.m */; };
 		A02A79AF1904E6BB00C440EC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A02A79AD1904E6BB00C440EC /* Main.storyboard */; };
-		A02A79B21904E6BB00C440EC /* SlideViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02A79B11904E6BB00C440EC /* SlideViewControllerViewController.m */; };
+		A02A79B21904E6BB00C440EC /* SlideViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A02A79B11904E6BB00C440EC /* SlideViewController.m */; };
 		A02A79B41904E6BB00C440EC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A02A79B31904E6BB00C440EC /* Images.xcassets */; };
 		A02A79BB1904E6BB00C440EC /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02A79BA1904E6BB00C440EC /* XCTest.framework */; };
 		A02A79BC1904E6BB00C440EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A02A799B1904E6BB00C440EC /* Foundation.framework */; };
@@ -45,8 +45,8 @@
 		A02A79AA1904E6BB00C440EC /* SlideViewControllerAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SlideViewControllerAppDelegate.h; sourceTree = "<group>"; };
 		A02A79AB1904E6BB00C440EC /* SlideViewControllerAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SlideViewControllerAppDelegate.m; sourceTree = "<group>"; };
 		A02A79AE1904E6BB00C440EC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A02A79B01904E6BB00C440EC /* SlideViewControllerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SlideViewControllerViewController.h; sourceTree = "<group>"; };
-		A02A79B11904E6BB00C440EC /* SlideViewControllerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SlideViewControllerViewController.m; sourceTree = "<group>"; };
+		A02A79B01904E6BB00C440EC /* SlideViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SlideViewController.h; sourceTree = "<group>"; };
+		A02A79B11904E6BB00C440EC /* SlideViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SlideViewController.m; sourceTree = "<group>"; };
 		A02A79B31904E6BB00C440EC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A02A79B91904E6BB00C440EC /* SlideViewControllerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SlideViewControllerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A02A79BA1904E6BB00C440EC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -115,8 +115,8 @@
 				A02A79AA1904E6BB00C440EC /* SlideViewControllerAppDelegate.h */,
 				A02A79AB1904E6BB00C440EC /* SlideViewControllerAppDelegate.m */,
 				A02A79AD1904E6BB00C440EC /* Main.storyboard */,
-				A02A79B01904E6BB00C440EC /* SlideViewControllerViewController.h */,
-				A02A79B11904E6BB00C440EC /* SlideViewControllerViewController.m */,
+				A02A79B01904E6BB00C440EC /* SlideViewController.h */,
+				A02A79B11904E6BB00C440EC /* SlideViewController.m */,
 				A02A79B31904E6BB00C440EC /* Images.xcassets */,
 				A02A79A21904E6BB00C440EC /* Supporting Files */,
 			);
@@ -250,7 +250,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A02A79B21904E6BB00C440EC /* SlideViewControllerViewController.m in Sources */,
+				A02A79B21904E6BB00C440EC /* SlideViewController.m in Sources */,
 				A02A79AC1904E6BB00C440EC /* SlideViewControllerAppDelegate.m in Sources */,
 				A02A79A81904E6BB00C440EC /* main.m in Sources */,
 			);
@@ -457,6 +457,7 @@
 				A02A79CC1904E6BB00C440EC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A02A79CD1904E6BB00C440EC /* Build configuration list for PBXNativeTarget "SlideViewControllerTests" */ = {
 			isa = XCConfigurationList;
@@ -465,6 +466,7 @@
 				A02A79CF1904E6BB00C440EC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

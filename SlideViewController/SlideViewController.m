@@ -6,20 +6,27 @@
 //  Copyright (c) 2014年 fmj. All rights reserved.
 //
 
-#import "SlideViewControllerViewController.h"
+#import "SlideViewController.h"
 
 //使用storayboard，segue的Identity必须定义为FM_SEGUE_ 跟着数字，必须以0开始的
 //例如：FM_SEGUE_0 FM_SEGUE_1
 #define FM_SEGUE_STR @"FM_SEGUE_"
 
+typedef NS_ENUM( NSInteger ,FM_SLIDE_DELEGATE_TYPE )
+{
+    SLIDE_WILL_SHOW = 0,
+    SLIDE_DID_SHOW,
+    SLIDE_CANCEL_SHOW
+};
 
-@interface SlideViewControllerViewController ()
+@interface SlideViewController ()<UIGestureRecognizerDelegate>
 
 @property(nonatomic) int currentIndex;
+@property(nonatomic) int destIndex;
 
 @end
 
-@implementation SlideViewControllerViewController
+@implementation SlideViewController
 
 - (void)viewDidLoad
 {
@@ -65,6 +72,7 @@
         return;
     }
     
+    UIViewController* currentViewController = [self.viewControllers objectAtIndex:self.currentIndex];
     UIView* firsetView = (UIView*)self.view.subviews.firstObject;
     
     if (pan.state == UIGestureRecognizerStateEnded) {
@@ -75,11 +83,13 @@
         CGFloat deltaX = firsetView.frame.origin.x;
         if (fabs(deltaX)>firsetView.frame.size.width/2) {
             [self animateShow:secondView dispear:firsetView];
+            [self triggerDelege:SLIDE_DID_SHOW from:[self.viewControllers objectAtIndex:_currentIndex] to:[self.viewControllers objectAtIndex:self.destIndex]];
             self.currentIndex =  self.currentIndex + (deltaX<0?1:-1);
         }
         else
         {
             [self animateShow:firsetView dispear:secondView];
+            [self triggerDelege:SLIDE_CANCEL_SHOW from:[self.viewControllers objectAtIndex:_currentIndex] to:[self.viewControllers objectAtIndex:self.destIndex]];
         }
     }
     else if(pan.state == UIGestureRecognizerStateCancelled )
@@ -88,8 +98,10 @@
         if ( firsetView == secondView ) {
             return;
         }
+        
         [self animateShow:firsetView dispear:secondView];
-        [secondView removeFromSuperview];
+        
+        [self triggerDelege:SLIDE_CANCEL_SHOW from:[self.viewControllers objectAtIndex:_currentIndex] to:[self.viewControllers objectAtIndex:self.destIndex]];
     }
     else if(pan.state == UIGestureRecognizerStateBegan)
     {
@@ -101,22 +113,35 @@
         CGPoint translate = [pan translationInView:self.view];
         NSLog(@"translate:%f",translate.x);
 
-        int secondIndex = translate.x< 0?self.currentIndex+1:self.currentIndex-1;
-        if (secondIndex == _currentIndex || secondIndex<0 || secondIndex>self.viewControllers.count-1) {
+        int nextIndex = translate.x< 0?self.currentIndex+1:self.currentIndex-1;
+        if ( nextIndex == _currentIndex || nextIndex<0 || nextIndex>self.viewControllers.count-1) {
             return;
         }
+        self.destIndex = nextIndex;
         
-        UIView* secondView = [[self.viewControllers objectAtIndex:secondIndex] view];
+        UIViewController* destViewController = [self.viewControllers objectAtIndex:self.destIndex];
+        UIView* secondView = [destViewController view];
         NSUInteger index = [self.view.subviews indexOfObject:secondView];
         if (index == NSNotFound) {
             UIView* preSecondView = (UIView*)self.view.subviews.lastObject;
+            
             if (preSecondView!= nil && preSecondView != firsetView) {
+                //左右滑动的时候，
+                for (UIViewController* controller in self.viewControllers) {
+                    if (controller.view == preSecondView) {
+                        [self triggerDelege:SLIDE_CANCEL_SHOW from:currentViewController to:controller];
+                        break;
+                    }
+                }
                 [preSecondView removeFromSuperview];
             }
             
+            [self triggerDelege:SLIDE_WILL_SHOW from:currentViewController to:destViewController];
             [secondView setFrame:CGRectMake(self.view.frame.size.width, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
             [self.view addSubview:secondView];
         }
+        
+        
         if (translate.x<0) {
             [secondView setFrame:CGRectMake(self.view.frame.size.width+translate.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
             [firsetView setFrame:CGRectMake(self.view.frame.origin.x+translate.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height)];
@@ -167,6 +192,50 @@
     }];
     
 }
+
+
+-(void)loadSegueViewControllers
+{
+    int i = 0;
+    while(true){
+        @try
+        {
+            NSString* segue = [NSString stringWithFormat:@"%@%d",FM_SEGUE_STR,i];
+            [self performSegueWithIdentifier:segue sender:nil];
+        }
+        @catch(NSException *exception) {
+            break;
+        }
+        i++;
+    }
+}
+
+-(void)triggerDelege:(FM_SLIDE_DELEGATE_TYPE)type from:(UIViewController*)from to:(UIViewController*)to
+{
+    if (type == SLIDE_DID_SHOW) {
+        if(self.delegate && [self.delegate respondsToSelector:@selector(didChangeFrom:to:)])
+        {
+            [self.delegate didChangeFrom:from to:to];
+        }
+    }
+    else if(type == SLIDE_WILL_SHOW)
+    {
+        if(self.delegate && [self.delegate respondsToSelector:@selector(willChangeFrom:to:)])
+        {
+            [self.delegate willChangeFrom:from to:to];
+        }
+    }
+    else if( type == SLIDE_CANCEL_SHOW)
+    {
+        if(self.delegate && [self.delegate respondsToSelector:@selector(cancelChangeFrom:to:)])
+        {
+            [self.delegate cancelChangeFrom:from to:to];
+        }
+    }
+}
+
+
+
 #pragma mark For StoryBoard
 
 -(void)prepareForSegue:(FMSlideViewControllerSegue *)segue sender:(id)sender
@@ -187,21 +256,6 @@
     }
 }
 
--(void)loadSegueViewControllers
-{
-    int i = 0;
-    while(true){
-        @try
-        {
-            NSString* segue = [NSString stringWithFormat:@"%@%d",FM_SEGUE_STR,i];
-            [self performSegueWithIdentifier:segue sender:nil];
-        }
-        @catch(NSException *exception) {
-            break;
-        }
-        i++;
-    }
-}
 @end
 
 
